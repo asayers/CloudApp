@@ -68,14 +68,14 @@ class Copier
       # Public: returns the command used to copy a url to the
       # clipboard for the current platform.
       #
-      # Returns a String with the bin
+      # Returns a Array with the commands to execute
       def copy_command
         if darwin?
-          'pbcopy'
+          ['pbcopy']
         elsif windows?
-          'clip'
+          ['clip']
         else
-          'xclip -selection clipboard'
+          ['xclip -selection clipboard', 'xclip -selection primary']
         end
       end
           
@@ -84,8 +84,10 @@ class Copier
       # since they both have echo commands.  I think.  Maybe? I dunno.
       #
       # Returns nothing.
-      def copy(url)    
-          system("echo #{url} | #{copy_command}")
+      def copy(url)
+        copy_command.each do |command|
+          system("echo #{url} | #{command}")
+        end
       end
     end
 end
