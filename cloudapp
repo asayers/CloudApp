@@ -27,14 +27,46 @@ rescue LoadError
   exit!(1)
 end
 
-config_file = "#{ENV['HOME']}/.cloudapp"
-unless File.exist?(config_file)
+if File.exists? "#{ENV['HOME']}/.cloudapp"
+  config_file = "#{ENV['HOME']}/.cloudapp"
+  email,password = File.read(config_file).split("\n")
+elsif File.exists? "#{ENV['HOME']}/.netrc"
+  config_file = "#{ENV['HOME']}/.netrc"
+  netrc = File.read(config_file).split("\n")
+
+  machines = {}
+  netrc.each do |line|
+    line.strip!
+    unless line.empty?
+      machines[line] = netrc.index(line) if line.start_with?("machine")
+    end
+  end
+
+  i = machines["machine getcloudapp.com"]
+  unless i
+    i = machines["machine my.cl.ly"]
+    unless i
+      puts "You need to create an entry for getcloudapp.com in your .netrc"
+      exit!(1)
+    end
+  end
+
+  breaks = machines.values.sort
+  breaks << netrc.length
+  j = breaks[breaks.index(i)+1]
+  i += 1
+  settings = {}
+  netrc[i...j].each do |line|
+    settings["login"] = line.split(" ").last if line.start_with?("login")
+    settings["password"] = line.split(" ").last if line.start_with?("password")
+  end
+
+  email,password = settings["login"],settings["password"]
+else
   puts "You need to type your email and password (one per line) into "+
        "`~/.cloudapp`"
   exit!(1)
 end
-
-email,password = File.read(config_file).split("\n")
 
 class HTTParty::Response
   # Apparently HTTPOK.ok? IS NOT OKAY WTFFFFFFFFFFUUUUUUUUUUUUUU
