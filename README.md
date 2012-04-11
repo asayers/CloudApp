@@ -1,37 +1,53 @@
-Hi!
+CloudApp
+========
 
-So long story short, I probably should've just forked this: https://github.com/holman/dotfiles/blob/master/bin/cloudapp
-
-...but GitHub doesn't allow you to fork repos if you already have a repo with the same name.  So, instead, here we are.
-
-This is a simple command-line ruby cloudapp client.  Throw it in your $PATH somewhere.
-
-In theory, it should work on OS X, Linux, and Windows.  
-
-In practice, it probably only works in Linux, because that's where I tested it.  Lulz!
-
-It simply uploads a file from the command line to CloudApp and drops the URL into your clipboard.
+A simple command-line cloudapp client for Linux, OS X, and Windows. It uploads a file to CloudApp and drops the URL into your clipboard.
 
 
 Installation
 -------------
 
-1.  Have ruby.  No ruby? No soup for you.
-2.  chmod a+x this thing. 
-3.  Add it to your $PATH (or better yet shove the file somewhere that's already in your $PATH)
-4.  Requires you set your CloudApp credentials in ~/.cloudapp as a simple file of:
-    #   email
-    #   password
+1. Check you have Ruby installed: `ruby --version`
+2. Make the script executable: `chmod +x cloudapp`
+3. Place it somewhere on your $PATH (/usr/bin/, /usr/local/bin/, or ~/bin/)
+4. Store your CloudApp credentials as an entry in ~/.netrc or in ~/.cloudapp.
+
+.netrc:
+
+    machine getcloudapp.com
+      logon EMAIL
+      password PASSWORD
+
+.cloudapp:
+
+    EMAIL
+    PASSWORD
 
 Usage
 -------
 
-1.  cloudapp trololo.png 
-2.  Paste that URL! Paste it!
+1. Run `cloudapp FILE`
+2. Paste link, either from the clipboard or from the primary.
 
+Licence
+-------
 
-Warranties and such
----------------------
+> This program is free software: you can redistribute it and/or modify
+> it under the terms of the GNU General Public License as published by
+> the Free Software Foundation, either version 3 of the License, or
+> (at your option) any later version.
+>
+> This program is distributed in the hope that it will be useful,
+> but WITHOUT ANY WARRANTY; without even the implied warranty of
+> MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> GNU General Public License for more details.
+>
+> You should have received a copy of the GNU General Public License
+> along with this program.  If not, see http://www.gnu.org/licenses/
 
-This software (lol, cmon now it's just a script) is provided as-is, so if it causes you any pain or chaos, don't sue me.  
+Authors
+-------
 
+ - Zach Holman (@holman) - Original script
+ - Aashay Desai (@aashaySFDC) - added support for Windows and Linux
+ - Alex Sayers (@asayers) - added support for netrc
