@@ -1,7 +1,7 @@
 CloudApp
 ========
 
-A simple command-line cloudapp client for Linux, OS X, and Windows. It uploads a file to CloudApp and drops the URL into your clipboard.
+A simple command-line cloudapp client for Linux, OS X, and Windows. It uploads a file to CloudApp and drops the URL into your clipboard. If you don't have a CloudApp account, go to <http://getcloudapp.com/>.
 
 
 Installation
