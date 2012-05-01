@@ -27,88 +27,25 @@
 #     password PASSWORD
 
 # Load required gems
-require 'rubygems'
 begin
   require 'cloudapp_api'
+  require 'netrc'
 rescue LoadError
-  puts "You need to install cloudapp_api: gem install cloudapp_api"
+  puts "You need to install cloudapp_api and netrc: gem install cloudapp_api netrc"
   exit!(1)
-end
-
-# Public: finds out what entries a netrc file contains
-# 
-# netrc: an array containing the lines of a netrc file
-#
-# Returns a Hash from the String name of each entry to its Fixnum line number
-def parse_netrc_entries(netrc)
-  machines = {}
-  netrc.each do |line|
-    unless line.empty?
-      machines[line] = netrc.index(line) if line.start_with?("machine")
-    end
-  end
-  machines
-end
-
-# Public: returns the data for a particular entry
-#
-# netrc: the array containing the netrc file
-# i: the line number of the header of the desired entry
-#
-# Returns an array containing the start and end line numbers of the data
-def get_netrc_data(netrc, i)
-  entry_headers = parse_netrc_entries(netrc).values.sort
-  entry_headers << netrc.length
-  j = entry_headers[entry_headers.index(i)+1]
-  i += 1
-  [i,j]
-end
-
-# Public: parses the data of a certain entry
-#
-# netrc: the array containing the netrc file
-# bounds: an array containing the first and last line numbers of the data to be parsed
-#
-# Returns a Hash containing the "login" and "password" fields
-def parse_netrc_data(netrc, bounds)
-  settings = {}
-  netrc[bounds[0]...bounds[1]].each do |line|
-    settings["login"] = line.split(" ").last if line.start_with?("login")
-    settings["password"] = line.split(" ").last if line.start_with?("password")
-  end
-  settings
 end
 
 # Check for and retrieve CloudApp credentials
 if File.exists? "#{ENV['HOME']}/.cloudapp"
   email,password = File.read("#{ENV['HOME']}/.cloudapp").split("\n")
-elsif File.exists? "#{ENV['HOME']}/.netrc"
-  # Read ~/.netrc and break it up into an array
-  file = File.read("#{ENV['HOME']}/.netrc").split("\n")
-  file.each { |line| line.strip! }
-
-  # Discover what entries it contains
-  entries = parse_netrc_entries(file)
-
-  # Check for appropriate entries
-  i = entries["machine getcloudapp.com"]
-  unless i
-    i = entries["machine my.cl.ly"]
-    unless i
-      # No entry found; exit
-      puts "You need to create an entry for getcloudapp.com in your .netrc"
-      exit!(1)
-    end
-  end
-
-  # Get the data in the chosen entry
-  bounds = get_netrc_data(file, i)
-  settings = parse_netrc_data(file, bounds)
-  email = settings["login"]
-  password = settings["password"]
 else
+  email,password = Netrc.read["getcloudapp.com"]
+end
+
+if email.nil? or password.nil?
   puts "You need to type your email and password (one per line) into "+
-       "`~/.cloudapp`"
+       "`~/.cloudapp`"+
+       "or create an entry for 'getcloudapp' in your ~/.netrc"
   exit!(1)
 end
 
